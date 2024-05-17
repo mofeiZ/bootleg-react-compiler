@@ -34,9 +34,8 @@ function analyze(
   func: Map<InstrId, Instruction>,
 ): Map<InstrId, ValueInfo> {
   const result = new Map<InstrId, ValueInfo>();
-
+  // Understand dependencies and what values should be memoized
   const mayChange = getValuesThatMayChange(func);
-
   for (const [id, instr] of func) {
     const dependencies = new Set<number>();
     for (const used of eachValue(instr)) {
@@ -53,12 +52,13 @@ function analyze(
   }
   print(func, result);
 
-  // TODO: understand writes!
+  // Understand writing to values produced by previous instructions
   const writableValues = getWritableValues(func);
   for (const [id, instr] of func) {
     if (instr.kind === "Call") {
       for (const used of eachValue(instr)) {
         if (writableValues.has(used)) {
+          // This is a maybe-write operation, so record it as such
           result.get(used)!.instructions ??=
             new Set();
           result.get(used)!.instructions?.add(id);
@@ -96,7 +96,7 @@ export default {
       const infos = analyze(instrs);
       understandAliasing(instrs, infos);
 
-      const body = codegenJS(instrs, infos, true);
+      const body = codegenJS(instrs, infos);
 
       babelFunc
         .get("body")

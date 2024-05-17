@@ -30,19 +30,18 @@ function getMutableValues(
   const mutableValues: Set<InstrId> = new Set();
   for (const [id, instr] of func) {
     // A value is `maybeMutable`
-    let isMutable;
-    // 0. if it is NOT the result of a hook call
-    if (isHookCall(instr, func)) {
-      continue;
-    }
     // 1. if it comes from specific instructions
-    isMutable = ["Call", "Object"].includes(
+    let isMutable = ["Call", "Object"].includes(
       instr.kind,
     );
     // 2. or is computed from other maybeMutable values
     for (const used of eachValue(instr)) {
       isMutable ||= mutableValues.has(used);
     }
+    // Note: the result of a hook calls themselves are not writable
+    // but... calls or objects that use those values might be
+    // So let's be conservative and say that the results of hook
+    // calls are writable
     if (isMutable) {
       mutableValues.add(id);
     }
@@ -50,6 +49,13 @@ function getMutableValues(
   return mutableValues;
 }
 
+/**
+ * Understand which instruction values might be the same
+ * and merge their write sets.
+ * Note that this is a very naive implementation, and doesn't
+ * cover many optimizations (see `InferMutableRanges` in
+ * react/compiler).
+ */
 export function understandAliasing(
   func: FunctionBody,
   info: ValueInfos,
@@ -102,6 +108,10 @@ export function understandAliasing(
     }
   }
 }
+
+/**
+ * Just in case we don't get to writing this during live demo
+ */
 export function understandMutability(
   func: FunctionBody,
   info: ValueInfos,
@@ -115,7 +125,10 @@ export function understandMutability(
   // Figure out which instructions might change operands
   // other than its own instrId
   for (const [id, instr] of func) {
-    if (instr.kind === "Call") {
+    if (
+      instr.kind === "Call" &&
+      !isHookCall(instr, func)
+    ) {
       for (const val of eachValue(instr)) {
         if (mutableValues.has(val)) {
           info.get(val)!.instructions ??=
@@ -123,49 +136,6 @@ export function understandMutability(
           info.get(val)!.instructions!.add(id);
         }
       }
-    }
-  }
-
-  // Step 2: Create map of aliases
-  const aliasBuilder = new DisjointSet<InstrId>();
-  for (const [id, instr] of func) {
-    if (
-      [
-        "Declare",
-        "ReadProperty",
-        "Call",
-      ].includes(instr.kind)
-    ) {
-      const mutableAliases = [];
-      for (const val of eachValue(instr)) {
-        if (mutableValues.has(val)) {
-          mutableAliases.push(val);
-        }
-      }
-      if (mutableAliases.length > 0) {
-        aliasBuilder.union([
-          id,
-          ...mutableAliases,
-        ]);
-      }
-    }
-  }
-  const aliasSets = aliasBuilder.buildSets();
-  // Mark all aliases as mutated
-  for (const aliases of aliasSets) {
-    const allMutatingInstructions =
-      new Set<number>(aliases);
-
-    for (const alias of aliases) {
-      for (const instr of info.get(alias)!
-        .instructions ?? []) {
-        allMutatingInstructions.add(instr);
-      }
-    }
-
-    for (const alias of aliases) {
-      info.get(alias)!.instructions =
-        allMutatingInstructions;
     }
   }
 }

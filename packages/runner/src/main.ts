@@ -287,6 +287,22 @@ export async function main(): Promise<void> {
   });
 }
 
+if (process.argv.length > 2) {
+  console.log(`
+HELP PAGE
+Usage: yarn start
+Description:
+Interactive runner for our bootlegged compiler.
+(r) -> reset to input / output screen
+(q) -> quit interactive runner
+(n) -> continue to next pass
+(s) -> step to next instruction (in pass)
+(f) -> step until all instructions (in pass) complete
+(0-9) -> step until nth instruction (in pass)
+`);
+  process.exit(0);
+}
+
 // main script
 readline.emitKeypressEvents(process.stdin);
 if (process.stdin.isTTY) {
