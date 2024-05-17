@@ -1,7 +1,7 @@
 import * as Babel from "@babel/core";
 import { ValueInfo, codegenJS, print, readInstructions } from "./Transform";
 import { InstrId, Instruction, eachValue } from "./LoweredJavaScript";
-import { isHookCall } from "./UnderstandMutability";
+import { isHookCall, understandAliasing } from "./UnderstandMutability";
 
 function getValuesThatMayChange(func: Map<InstrId, Instruction>): Set<InstrId> {
   const mayChange = new Set<InstrId>();
@@ -98,6 +98,7 @@ export default {
       print(instrs);
 
       const info = analyze(instrs);
+      understandAliasing(instrs, info);
 
       const generatedBody = codegenJS(instrs, info);
       babelFunc
