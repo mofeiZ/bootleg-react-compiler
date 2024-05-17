@@ -6,8 +6,12 @@ function analyze(func: Map<InstrId, Instruction>): Map<InstrId, ValueInfo> {
   const result = new Map<InstrId, ValueInfo>();
   for (const [id, instr] of func) {
     // TODO
+
+    // Only call or object instructions can be expensive or create
+    // new objects. Other instructions in our limited set are cheap
+    // and read existing values.
     result.set(id, {
-      shouldMemo: true,
+      shouldMemo: instr.kind === "Call" || instr.kind === "Object",
     });
   }
   print(func, result);
