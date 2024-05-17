@@ -1,0 +1,21 @@
+{
+    "extends": "@tsconfig/node18-strictest/tsconfig.json",
+    "compilerOptions": {
+      "declaration": true,
+      "rootDir": "src",
+      "outDir": "dist",
+      "noUncheckedIndexedAccess": false,
+      "target": "ES2015",
+      "sourceMap": true,
+      "ignoreDeprecations": "5.0",
+      "importsNotUsedAsValues": "preserve",
+      "noUnusedLocals": false
+    },
+    "exclude": [
+      "node_modules",
+    ],
+    "include": [
+      "src/**/*.ts"
+    ]
+  }
+  

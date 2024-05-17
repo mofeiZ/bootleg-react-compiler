@@ -1,0 +1,29 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "prettier": "prettier --write src"
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "@babel/core": "^7.23.2",
+    "@babel/generator": "^7.23.0",
+    "@babel/parser": "^7.23.0",
+    "chalk": "4.1.2",
+    "demo-utils": "*"
+  },
+  "devDependencies": {
+    "@tsconfig/node18-strictest": "^1.0.0",
+    "@types/babel__core": "^7.20.3",
+    "@types/node": "^20.8.7",
+    "prettier": "^3.0.3",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
+  }
+}

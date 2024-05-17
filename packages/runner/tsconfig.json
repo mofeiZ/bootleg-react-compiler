@@ -1,0 +1,22 @@
+{
+    "extends": "@tsconfig/node18-strictest/tsconfig.json",
+    "compilerOptions": {
+      "declaration": true,
+      "rootDir": "src",
+      "outDir": "dist",
+      "noUncheckedIndexedAccess": false,
+      "target": "ESNext",
+      "sourceMap": true,
+      "ignoreDeprecations": "5.0",
+      "importsNotUsedAsValues": "preserve",
+      "noUnusedLocals": false,
+      "module": "ESNext"
+    },
+    "exclude": [
+      "node_modules",
+    ],
+    "include": [
+      "src/**/*.ts"
+    ]
+  }
+  

@@ -1,0 +1,24 @@
+{
+  "name": "demo-utils",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "prettier": "prettier --write src"
+  },
+  "devDependencies": {
+    "@tsconfig/node18-strictest": "^1.0.0",
+    "@types/babel__core": "^7.20.3",
+    "@types/node": "^20.8.7",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@babel/core": "^7.23.2",
+    "@babel/types": "^7.23.0",
+    "chalk": "4.1.2"
+  }
+}
