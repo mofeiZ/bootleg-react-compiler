@@ -1,9 +1,11 @@
 import * as Babel from "@babel/core";
+import { print, readInstructions } from "./Transform";
 
 export default {
   visitor: {
     FunctionDeclaration(babelFunc) {
-      console.log("found", babelFunc.node.id?.name);
-    }
+      const instrs = readInstructions(babelFunc);
+      print(instrs);
+    },
   },
 } as Babel.PluginObj;
