@@ -1,17 +1,23 @@
 import * as Babel from "@babel/core";
 import { ValueInfo, codegenJS, print, readInstructions } from "./Transform";
-import { InstrId, Instruction } from "./LoweredJavaScript";
+import { InstrId, Instruction, eachValue } from "./LoweredJavaScript";
 
 function analyze(func: Map<InstrId, Instruction>): Map<InstrId, ValueInfo> {
   const result = new Map<InstrId, ValueInfo>();
   for (const [id, instr] of func) {
-    // TODO
+    const dependencies = new Set<number>();
+    // Maybe every value an instruction uses should be counted
+    // as a dependency?
+    for (const used of eachValue(instr)) {
+      dependencies.add(used);
+    }
 
     // Only call or object instructions can be expensive or create
     // new objects. Other instructions in our limited set are cheap
     // and read existing values.
     result.set(id, {
       shouldMemo: instr.kind === "Call" || instr.kind === "Object",
+      dependencies,
     });
   }
   print(func, result);
