@@ -1,5 +1,5 @@
 import * as Babel from "@babel/core";
-import { print, readInstructions } from "./Transform";
+import { codegenJS, print, readInstructions } from "./Transform";
 
 export default {
   visitor: {
@@ -7,7 +7,10 @@ export default {
       const instrs = readInstructions(babelFunc);
       print(instrs);
 
-      babelFunc.get("body").replaceWith(Babel.types.blockStatement([]));
+      const generatedBody = codegenJS(instrs);
+      babelFunc
+        .get("body")
+        .replaceWith(Babel.types.blockStatement(generatedBody));
     },
   },
 } as Babel.PluginObj;
