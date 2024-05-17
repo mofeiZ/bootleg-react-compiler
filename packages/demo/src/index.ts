@@ -6,6 +6,8 @@ export default {
     FunctionDeclaration(babelFunc) {
       const instrs = readInstructions(babelFunc);
       print(instrs);
+
+      babelFunc.get("body").replaceWith(Babel.types.blockStatement([]));
     },
   },
 } as Babel.PluginObj;
