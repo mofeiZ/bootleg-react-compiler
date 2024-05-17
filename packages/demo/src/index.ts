@@ -7,7 +7,7 @@ function analyze(func: Map<InstrId, Instruction>): Map<InstrId, ValueInfo> {
   for (const [id, instr] of func) {
     // TODO
     result.set(id, {
-      /* TODO */
+      shouldMemo: true,
     });
   }
   print(func, result);
