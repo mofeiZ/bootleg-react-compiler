@@ -1,5 +1,18 @@
 import * as Babel from "@babel/core";
-import { codegenJS, print, readInstructions } from "./Transform";
+import { ValueInfo, codegenJS, print, readInstructions } from "./Transform";
+import { InstrId, Instruction } from "./LoweredJavaScript";
+
+function analyze(func: Map<InstrId, Instruction>): Map<InstrId, ValueInfo> {
+  const result = new Map<InstrId, ValueInfo>();
+  for (const [id, instr] of func) {
+    // TODO
+    result.set(id, {
+      /* TODO */
+    });
+  }
+  print(func, result);
+  return result;
+}
 
 export default {
   visitor: {
@@ -7,7 +20,9 @@ export default {
       const instrs = readInstructions(babelFunc);
       print(instrs);
 
-      const generatedBody = codegenJS(instrs);
+      const info = analyze(instrs);
+
+      const generatedBody = codegenJS(instrs, info);
       babelFunc
         .get("body")
         .replaceWith(Babel.types.blockStatement(generatedBody));
